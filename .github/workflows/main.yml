@@ -10,18 +10,23 @@ jobs:
     steps:
       - name: Retrive project code
         uses: actions/checkout@v4
-      - 
-        name: Authenticate on Docker Hub
+
+       
+      - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build Docker Image
-        run: echo "Executing Docker Build command"
-
-      - name: Send Docker Image
-        run: echo "Sending Docker Image with push command"
+      
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./src
+          push: true
+          file: .src/Dockerfile
+          tags: |
+            adilsoncapitadev/fake-shop:latest
+            adilsoncapitadev/fake-shop:v${{ github.run_number }}
 
   cd:
     runs-on: ubuntu-latest
