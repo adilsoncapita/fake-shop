@@ -5,23 +5,33 @@ on:
     branches: ["main"]
   workflow_dispatch:
 jobs:
-  ci:
+  CI:
     runs-on: ubuntu-latest
     steps:
-      - name: Authentication on Docker Hub
-        run: echo "Executing Doker Login command"
+      - name: Retrive project code
+        uses: actions/checkout@v4
+      - 
+        name: Authenticate on Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Build Docker Image
         run: echo "Executing Docker Build command"
-      - name: Send Docker Image
-        run: echo "Sending Docker Image"
 
-  cd:
+      - name: Send Docker Image
+        run: echo "Sending Docker Image with push command"
+
+  CD:
     runs-on: ubuntu-latest
-    needs: [ci]
+    needs: [CI]
     steps:
       - name: Authentication on AWS
         run: echo "Executing AWS configure command"
+
       - name: Configure kubectl
         run: echo "Executing aws eks update-kubeconfig command"
+
       - name: Apply manifest on Kubernetes
         run: echo "Executing kubectl apply"
